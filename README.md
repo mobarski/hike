@@ -104,6 +104,12 @@ TODO
 
 
 
+### Checkpoints and resumptions
+
+TODO
+
+
+
 ### Parallel execution
 
 TODO
