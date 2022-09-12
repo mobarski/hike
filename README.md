@@ -42,17 +42,19 @@ python example.py hello:10,10,20  # hello hello world
 Running the script without any arguments (`python example.py`) will print the help:
 
 ```
-USAGE: example.py [task1:[:steps]] [task2[:steps]] ...
+USAGE: test.py [task1:[:steps]] [task2[:steps]] [--use variants]
 
 steps - comma separated list of step identifiers; leave empty to select
-        all the steps; use dash to specify ranges; example: 10,20,30-40,99
+        all the steps; use dash to specify ranges; example: '10,20,30-40,99'
+
+variants - coma separated list of step variants to use; example: 'cpu,windows'
 
 
 Available tasks: hello
 
-hello:
-• step 10   -- say hello
-• step 20   -- say world
+hello steps:
+├─ 10 -- say hello
+└─ 20 -- say world
 ```
 
 
@@ -92,13 +94,31 @@ hike.run_steps('hello', [40], ctx={'name':'Jane'}) # hello Jane
 
 
 
-### Environmental variables
-
-TODO
-
-
-
 ### Step variants
+
+*WIP*
+
+```python
+def model_step10(ctx): ...
+def model_step20_cpu(ctx): ...
+def model_step20_gpu_default(ctx): ...
+def model_step30_linux(ctx): ...
+def model_step30_windows(ctx): ...
+def model_step30_macos_default(ctx): ...
+def model_step40(ctx): ...
+```
+
+```python
+hike.run_steps('model', use=['default'])     # steps: 10, 20_gpu, 30_macos, 40
+hike.run_steps('model', use=['cpu','linux']) # steps: 10, 20_cpu, 30_linux, 40
+hike.run_steps('model') # steps: 10, 40
+```
+
+`python example.py model --use cpu,linux`
+
+
+
+### Environmental variables
 
 TODO
 
