@@ -1,8 +1,9 @@
 __author__ = 'Maciej Obarski'
-__version__ = '0.2'
+__version__ = '0.2.1'
 __license__ = 'MIT'
 
 # CHANGELOG:
+# 0.2.1 - omit underscores in steps listing
 # 0.2 - variants
 
 import re
@@ -107,6 +108,7 @@ def _list_steps():
 		print(f"{j} steps:")
 		for i,fun in enumerate(jobs[j]):
 			_,_,s = fun.__name__.partition('_step')
+			s = s.replace('_', ' ')
 			label = (fun.__doc__ or '').split('\n')[0]
 			label = f' -- {label}' if label else ''
 			prefix = "└─" if i==len(jobs[j])-1 else "├─"

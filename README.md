@@ -96,8 +96,6 @@ hike.run_steps('hello', [40], ctx={'name':'Jane'}) # hello Jane
 
 ### Step variants
 
-*WIP*
-
 ```python
 def model_step10(ctx): ...
 def model_step20_cpu(ctx): ...
