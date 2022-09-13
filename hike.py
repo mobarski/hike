@@ -1,8 +1,9 @@
 __author__ = 'Maciej Obarski'
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 __license__ = 'MIT'
 
 # CHANGELOG:
+# 0.2.2 - cosmetic changes in step listing
 # 0.2.1 - omit underscores in steps listing
 # 0.2 - variants
 
@@ -103,16 +104,16 @@ def _parse_steps(text):
 def _list_steps():
 	jobs = _get_jobs(depth=3)
 	jobs_str = ', '.join(jobs)
-	print(f'Available tasks: {jobs_str}\n')
+	print(f'Available tasks: {jobs_str}\n\nSteps:\n')
 	for j in jobs:
-		print(f"{j} steps:")
+		print(f" {j}:")
 		for i,fun in enumerate(jobs[j]):
 			_,_,s = fun.__name__.partition('_step')
 			s = s.replace('_', ' ')
 			label = (fun.__doc__ or '').split('\n')[0]
 			label = f' -- {label}' if label else ''
 			prefix = "└─" if i==len(jobs[j])-1 else "├─"
-			print(f'{prefix} {s}{label}')
+			print(f'  {prefix} {s}{label}')
 		print()
 
 # -----------------------------------------------------------------------------
@@ -126,10 +127,10 @@ def run_steps(job, args=None, ctx=None, depth=2, use=[]):
 		t0 = time.time()
 		label = (fun.__doc__ or '').split('\n')[0]
 		label = f' -- {label}' if label else ''
-		print(f'running {fun.__name__}{label} ', end='', file=sys.stderr, flush=True)
+		print(f'running {fun.__name__}{label} ', end='\n', file=sys.stderr, flush=True)
 		fun(ctx)
 		dt = time.time()-t0
-		print(f'... done in {dt:0.1f}s', file=sys.stderr, flush=True)
+		#print(f'... done in {dt:0.1f}s', file=sys.stderr, flush=True)
 	return ctx
 
 
@@ -151,8 +152,9 @@ def run_cli():
 		print(USAGE)
 		_list_steps()
 		exit(1)
+	ctx = {'use':use}
 	for a in args:
 		job,_,raw_steps = a.partition(':')
 		steps = _parse_steps(raw_steps)
-		run_steps(job, steps, use=use, depth=3)
+		run_steps(job, steps, ctx=ctx, use=use, depth=3)
 

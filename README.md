@@ -116,9 +116,20 @@ hike.run_steps('model') # steps: 10, 40
 
 
 
-### Environmental variables
+### Nested tasks
 
-TODO
+```python
+def all_step10(ctx):
+	"run all tasks (model, hello)"
+	hike.run_steps('model', use=ctx.get('use'))
+	hike.run_steps('hello')
+```
+
+
+
+
+
+## Planned features
 
 
 
