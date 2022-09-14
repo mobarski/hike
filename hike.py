@@ -3,6 +3,7 @@ __version__ = '0.2.3'
 __license__ = 'MIT'
 
 # CHANGELOG:
+# 0.2.4 - cosmetic changes in run_steps
 # 0.2.3 - cosmetic changes in step listing
 # 0.2.2 - cosmetic changes in step listing
 # 0.2.1 - omit underscores in steps listing
@@ -125,11 +126,12 @@ def run_steps(job, args=None, ctx=None, depth=2, use=[]):
 	jobs = _get_jobs(depth=depth)
 	all_steps = jobs[job]
 	steps = _filter_steps(all_steps, args, use)
+	width = max([len(fun.__name__) for fun in steps])
 	for i,fun in enumerate(steps):
 		t0 = time.time()
 		label = (fun.__doc__ or '').split('\n')[0]
 		label = f' -- {label}' if label else ''
-		print(f'running {fun.__name__}{label} ', end='\n', file=sys.stderr, flush=True)
+		print(f'running {fun.__name__:{width}}{label} ', end='\n', file=sys.stderr, flush=True)
 		fun(ctx)
 		dt = time.time()-t0
 		#print(f'... done in {dt:0.1f}s', file=sys.stderr, flush=True)
