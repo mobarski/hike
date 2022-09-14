@@ -1,8 +1,9 @@
 __author__ = 'Maciej Obarski'
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 __license__ = 'MIT'
 
 # CHANGELOG:
+# 0.2.3 - cosmetic changes in step listing
 # 0.2.2 - cosmetic changes in step listing
 # 0.2.1 - omit underscores in steps listing
 # 0.2 - variants
@@ -104,8 +105,9 @@ def _parse_steps(text):
 def _list_steps():
 	jobs = _get_jobs(depth=3)
 	jobs_str = ', '.join(jobs)
-	print(f'Available tasks: {jobs_str}\n\nSteps:\n')
+	print(f'Available tasks: {jobs_str}\n')
 	for j in jobs:
+		width = max([len(f.__name__.partition('_step')[2]) for f in jobs[j]])
 		print(f" {j}:")
 		for i,fun in enumerate(jobs[j]):
 			_,_,s = fun.__name__.partition('_step')
@@ -113,7 +115,7 @@ def _list_steps():
 			label = (fun.__doc__ or '').split('\n')[0]
 			label = f' -- {label}' if label else ''
 			prefix = "└─" if i==len(jobs[j])-1 else "├─"
-			print(f'  {prefix} {s}{label}')
+			print(f'  {prefix} {s:{width}}{label}')
 		print()
 
 # -----------------------------------------------------------------------------
