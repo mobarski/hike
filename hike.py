@@ -1,8 +1,9 @@
 __author__ = 'Maciej Obarski'
-__version__ = '0.2.6'
+__version__ = '0.2.7'
 __license__ = 'MIT'
 
 # CHANGELOG:
+# 0.2.7 - run_steps cosmetic changes, level param (experimental), omit
 # 0.2.6 - run_steps cosmetic changes, label param
 # 0.2.5 - run_steps run time
 # 0.2.4 - cosmetic changes in run_steps
@@ -60,7 +61,7 @@ def _get_jobs(depth=1): # -> dict[str, list[function]]
 	return out
 
 
-def _filter_steps(fun_list, args, use):
+def _filter_steps(fun_list, args, use, omit):
 	# TODO: refactor
 	if args is None:
 		args = [(None, None)]
@@ -73,8 +74,10 @@ def _filter_steps(fun_list, args, use):
 					job, step, variant = m[0]
 					if step==str(a):
 						if variant:
-							if set(variant.strip('_').split('_')) & set(use):
-								out += [f]
+							variants = variant.strip('_').split('_')
+							if set(variants) & set(use):
+								if not set(variant) & set(omit):
+									out += [f]
 						else:
 							out += [f]
 		if type(a) is tuple:
@@ -86,8 +89,10 @@ def _filter_steps(fun_list, args, use):
 					job, step, variant = m[0]
 					if lo <= int(step) <= hi:
 						if variant:
-							if set(variant.strip('_').split('_')) & set(use):
-								out += [f]
+							variants = variant.strip('_').split('_')
+							if set(variants) & set(use):
+								if not set(variant) & set(omit):
+									out += [f]
 						else:
 							out += [f]
 	return out
@@ -123,25 +128,28 @@ def _list_steps():
 
 # -----------------------------------------------------------------------------
 
-def run_steps(job, args=None, ctx=None, depth=2, use=[], label=''):
+def run_steps(job, args=None, ctx=None, depth=2, use=[], omit=[], label='', level=0):
 	t0 = time.time()
 	ctx = {} if ctx==None else ctx
 	jobs = _get_jobs(depth=depth)
 	all_steps = jobs[job]
-	steps = _filter_steps(all_steps, args, use)
+	steps = _filter_steps(all_steps, args, use, omit)
 	width = max([len(fun.__name__) for fun in steps])
 	label_str = f" ({label})" if label else ''
-	print(f"\n{job}{label_str}:", flush=True)
+	prefix = ' │ '*level
+	print(f"{prefix}", flush=True)
+	print(f"{prefix}{job}{label_str}:", flush=True)
 	for i,fun in enumerate(steps):
 		#t1 = time.time()
 		label = (fun.__doc__ or '').split('\n')[0]
 		label = f' -- {label}' if label else ''
-		print(f' ├─ {fun.__name__:{width}}{label} ', end='\n', file=sys.stderr, flush=True)
+		print(f'{prefix} ├─ {fun.__name__:{width}}{label} ', end='\n', file=sys.stderr, flush=True)
 		fun(ctx)
 		#dt = time.time()-t1
 		#print(f'... done in {dt:0.1f}s', file=sys.stderr, flush=True)
 	dt = time.time() - t0
-	print(f' └─ done in {dt:0.1f}s', file=sys.stderr, flush=True)
+	print(f'{prefix} └─ done in {dt:0.1f}s', file=sys.stderr, flush=True)
+	print(f'{prefix}', file=sys.stderr, flush=True)
 	return ctx
 
 
