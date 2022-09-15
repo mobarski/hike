@@ -8,7 +8,7 @@ Hike is a library for automatically generating command line interfaces (CLIs) fr
 
 ## Installation
 
-To install Hike with pip, run: `pip install hike` or `pip install git+https://github.com/mobarski/hike`
+To install Hike with pip, run: `pip install git+https://github.com/mobarski/hike` or  `pip install hike`  (**not yet**)
 
 
 
